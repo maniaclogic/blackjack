@@ -7,10 +7,11 @@ Play blackjack in the terminal.
 
 
 # Tasking
-- Setup Deck and random selector
-- Assign 2 cards each (Dealer 1 hidden)
-- give option to draw again or not (Hit or Stand) 
 - Dealer under 17 = draws again
-- SetUp Win - Loose
-- Play again or exit
+- refactor:
+  - setup blackjack function
+  - setup compare function
+  - SetUp Win - Loose
+  - setup play_game function
+  - while input() == 'y': clear() play_game()
 - Add fluff (welcome print, card display, Win/ Loss message)
