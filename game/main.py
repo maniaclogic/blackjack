@@ -1,62 +1,41 @@
-from core import deal_random_cards, random_card, score
+from core import deal_random_cards, random_card, score, compare_scores, win_condition
 from helpers import create_deck_instance
 from replit import clear
 
 
-def main():
+def play_game():
     deck = create_deck_instance()
-    play = True
+    game_over = False
+    players_turn_over = False
+    players_hand, dealers_hand = deal_random_cards(deck)
+    players_score = score(players_hand)
+    dealers_score = score(dealers_hand)
 
-    while play:
-        players_hand, dealers_hand = deal_random_cards(deck)
-        print("\nYour hand is: ", players_hand)
-        print("\nThe dealers hand is: ", dealers_hand[0], " [hidden]")
+    while not game_over and not players_turn_over:
+        clear()
 
-        players_score = score(players_hand)
-        dealers_score = score(dealers_hand)
+        print("\nYour hand is: %s with a current score of: %s" % (
+            players_hand, players_score if players_score != 0 else "Blackjack!"))
+        print("\nThe dealers first card is: %s" % dealers_hand[0])
 
-        print("\nYour score is: " + str(players_score))
-        hit_or_stand = input("\nWould you like to draw another card? Type 'y' or 'n'\n")
+        if players_score > 21 or players_score == 0 or dealers_score == 0:
+            game_over = True
+        else:
+            hit_or_stand = input("\nWould you like to draw another card? Type 'y' or 'n'\n")
 
-        if hit_or_stand.lower() == 'y':
-            players_hand.append(random_card(deck))
-            print(players_hand)
-
-        players_score = score(players_hand)
-        print("\nYour final score is: ", players_score)
-
-        if players_score > 21 or dealers_score is 21:
-            print("\n\n Lost. The house always wins")
-
-            play_again = input("\n Would you like to play again? Press 'y' for yes or 'n' for no. \n")
-            if play_again is 'y':
-                play = False
-                main()
+            if hit_or_stand.lower() == 'y':
+                players_hand.append(random_card(deck))
+                players_score = score(players_hand)
             else:
-                play = False
+                players_turn_over = True
 
-        if dealers_score < 17:
-            print("\nThe dealer chooses to draw a card")
-            dealers_hand.append(random_card(deck))
-
+    while dealers_score != 0 and dealers_score < 17 and not game_over:
+        print("\nThe dealer chooses to draw a card")
+        dealers_hand.append(random_card(deck))
         dealers_score = score(dealers_hand)
 
-        print(dealers_hand)
-        print("\nThe dealer reveals their hand ... \n", dealers_hand)
-        print("\nTheir final score is: ", dealers_score)
-
-        # win or loose
-        if players_score > dealers_score:
-            print("\n\n YOU WIN!!!!")
-        else:
-            print("\n\n Lost. The house always wins")
-
-        play_again = input("\n Would you like to play again? Press 'y' for yes or 'n' for no. \n")
-        if play_again is 'y':
-            play = False
-            main()
-        else:
-            play = False
+    win_condition(players_hand, players_score, dealers_hand, dealers_score)
 
 
-main()
+while input("Would you like to play a game of blackjack? Press 'y' to continue or 'n' to exit\n") == 'y':
+    play_game()
